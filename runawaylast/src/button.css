@@ -1,0 +1,55 @@
+/* 로그인 버튼을 가운데 정렬 */
+.login-container {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 10vh; /* 화면 높이의 10%를 사용해 수직으로도 중앙 정렬 */
+    /* background: linear-gradient(40deg, #42be63, #42be63, #aecc07, #03d5ff); 이미지와 어울리는 초록색 배경 적용할려고 했으나 없는게 나아서 우선 주석처리할게용*/
+    
+  }
+
+  .logout-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 10vh; /* 필요에 따라 조정 가능 */
+}
+
+.running-record { 
+  margin: 0;
+  font-family: "Roboto Condensed", sans-serif;
+  font-size: 2rem;
+  background: linear-gradient(40deg, #42be63, #42be63, #aecc07, #03d5ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+  border: none;
+}
+
+.centered-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30vh; /* 화면 전체 높이 기준으로 중앙 정렬 */
+}
+
+.running-button, .bag-button {
+  padding: 15px 30px;
+  font-size: 18px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 10px; /* 버튼 간격 추가 */
+}
+
+.bag-button:hover, .running-button:hover {
+  background-color: #45a049;
+}
+
+.bag-options {
+  text-align: center;
+}

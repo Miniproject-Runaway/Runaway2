@@ -1,0 +1,67 @@
+#result-list {
+    margin-top: 20px;
+  }
+  
+  .places-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start;
+  }
+  
+  .place-card {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    width: 240px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .place-index {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #4caf50;
+  }
+  
+  .place-info {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  
+  .place-name {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+  
+  .place-address {
+    display: block;
+    color: #888;
+  }
+  
+  .place-old-address {
+    display: block;
+    font-size: 12px;
+    color: #aaa;
+  }
+  
+  .place-phone {
+    color: #555;
+  }
+  
+  #pagination a {
+    margin: 0 5px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    color: #555;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  #pagination a.on {
+    background-color: #4caf50;
+    color: white;
+  }
