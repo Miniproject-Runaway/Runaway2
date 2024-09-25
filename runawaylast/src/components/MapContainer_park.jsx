@@ -1,9 +1,11 @@
+// MapContainer_park.jsx
+
 import React, { useEffect, useState } from 'react';
 import './MapContainer.css';
 
 const { kakao } = window;
 
-const MapContainer_park = ({ searchPlace }) => {
+const MapContainer_park = ({ searchPlace, onSelectPark }) => {
   
   const [Places, setPlaces] = useState([]);
 
@@ -88,7 +90,12 @@ const MapContainer_park = ({ searchPlace }) => {
       <div id="result-list">
         <div className="places-container">
           {Places.map((item, i) => (
-            <div key={i} className="place-card">
+            <div
+              key={i}
+              className="place-card"
+              onClick={() => onSelectPark(item.place_name)} // 공원 이름 클릭 시 호출
+              style={{ cursor: 'pointer' }}
+            >
               <span className="place-index">{i + 1}</span>
               <div className="place-info">
                 <h5 className="place-name">{item.place_name}</h5>
