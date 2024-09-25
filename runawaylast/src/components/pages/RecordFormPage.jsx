@@ -1,16 +1,27 @@
-import React, { useState } from "react";
+// RecordFormPage.jsx
+
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./form.css";
 
-function RecordFormPage({ user }) {
-  // 로그인한 사용자 정보를 받음
+function RecordFormPage({ user, selectedPark }) { // selectedPark 추가
   const [formData, setFormData] = useState({
     runningDate: "",
-    spot: "",
+    spot: selectedPark || "", // selectedPark가 있으면 초기값으로 설정
     content: "",
   });
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // selectedPark가 변경되면 spot 필드 업데이트
+    if (selectedPark) {
+      setFormData((prevData) => ({
+        ...prevData,
+        spot: selectedPark,
+      }));
+    }
+  }, [selectedPark]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

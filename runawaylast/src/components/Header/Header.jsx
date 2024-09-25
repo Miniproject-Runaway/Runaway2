@@ -14,7 +14,7 @@ export function Header() {
       <img src={reactImg} alt="Stylized atom" />
       <h1>Runaway</h1>
       <p>
-        {description} 언제 어디서든 편리하게 짐을 맡기고, 자유럽게 러닝을 시작해보세요!
+        {description} 언제 어디서든 편리하게 짐을 맡기고, 자유롭게 러닝을 시작해보세요!
       </p>
     </header>
   );

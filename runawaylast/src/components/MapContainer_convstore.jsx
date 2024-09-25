@@ -3,13 +3,12 @@ import './MapContainer.css';
 
 const { kakao } = window;
 
-const MapContainer_convstore = ({ searchPlace }) => {
-  
+const MapContainer_convstore = ({ searchPlace, onSelectStore }) => {
   const [Places, setPlaces] = useState([]);
+  const [pagination, setPagination] = useState(null); // 페이지네이션 상태 추가
 
   useEffect(() => {
     var infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
-    var markers = [];
     const container = document.getElementById('myMap');
     const options = {
       center: new kakao.maps.LatLng(33.450701, 126.570667),
@@ -18,49 +17,20 @@ const MapContainer_convstore = ({ searchPlace }) => {
     const map = new kakao.maps.Map(container, options);
 
     const ps = new kakao.maps.services.Places();
-
-    // "편의점" 키워드 추가
     const combinedSearchPlace = `${searchPlace} 편의점`;
     ps.keywordSearch(combinedSearchPlace, placesSearchCB);
 
     function placesSearchCB(data, status, pagination) {
       if (status === kakao.maps.services.Status.OK) {
         let bounds = new kakao.maps.LatLngBounds();
-        for (let i = 0; i < data.length; i++) {
-          displayMarker(data[i]);
-          bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
-        }
+        data.forEach((place) => {
+          displayMarker(place);
+          bounds.extend(new kakao.maps.LatLng(place.y, place.x));
+        });
         map.setBounds(bounds);
-        displayPagination(pagination);
         setPlaces(data);
+        setPagination(pagination); // 페이지네이션 상태 업데이트
       }
-    }
-
-    function displayPagination(pagination) {
-      var paginationEl = document.getElementById('pagination'),
-        fragment = document.createDocumentFragment(),
-        i;
-      while (paginationEl.hasChildNodes()) {
-        paginationEl.removeChild(paginationEl.lastChild);
-      }
-      for (i = 1; i <= pagination.last; i++) {
-        var el = document.createElement('a');
-        el.href = '#';
-        el.innerHTML = i;
-
-        if (i === pagination.current) {
-          el.className = 'on';
-        } else {
-          el.onclick = (function (i) {
-            return function () {
-              pagination.gotoPage(i);
-            };
-          })(i);
-        }
-
-        fragment.appendChild(el);
-      }
-      paginationEl.appendChild(fragment);
     }
 
     function displayMarker(place) {
@@ -76,6 +46,33 @@ const MapContainer_convstore = ({ searchPlace }) => {
     }
   }, [searchPlace]);
 
+  // 페이지네이션 처리 함수
+  const handlePagination = (page) => {
+    if (pagination) {
+      pagination.gotoPage(page); // 페이지 이동
+    }
+  };
+
+  // 페이지네이션 UI 생성 함수
+  function displayPagination() {
+    if (!pagination) return null; // 페이지네이션이 없을 경우 표시 안함
+
+    const pages = [];
+    for (let i = 1; i <= pagination.last; i++) {
+      pages.push(
+        <button
+          key={i}
+          className={`page-button ${i === pagination.current ? 'on' : ''}`} // 현재 페이지에 'on' 클래스 추가
+          onClick={() => handlePagination(i)}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    return <div className="pagination-container">{pages}</div>;
+  }
+
   return (
     <div>
       <div
@@ -88,7 +85,12 @@ const MapContainer_convstore = ({ searchPlace }) => {
       <div id="result-list">
         <div className="places-container">
           {Places.map((item, i) => (
-            <div key={i} className="place-card">
+            <div
+              key={i}
+              className="place-card"
+              onClick={() => onSelectStore(item)} // 선택된 편의점을 전달
+              style={{ cursor: 'pointer' }}
+            >
               <span className="place-index">{i + 1}</span>
               <div className="place-info">
                 <h5 className="place-name">{item.place_name}</h5>
@@ -105,7 +107,7 @@ const MapContainer_convstore = ({ searchPlace }) => {
             </div>
           ))}
         </div>
-        <div id="pagination"></div>
+        {displayPagination()} {/* 페이지네이션 UI 표시 */}
       </div>
     </div>
   );
