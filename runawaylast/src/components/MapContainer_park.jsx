@@ -5,6 +5,7 @@ const { kakao } = window;
 
 const MapContainer_park = ({ searchPlace, onSelectPark }) => {
   const [Places, setPlaces] = useState([]);
+  const [pagination, setPagination] = useState(null); // 페이지네이션 상태 추가
 
   useEffect(() => {
     var infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
@@ -16,11 +17,10 @@ const MapContainer_park = ({ searchPlace, onSelectPark }) => {
     const map = new kakao.maps.Map(container, options);
 
     const ps = new kakao.maps.services.Places();
-
     const combinedSearchPlace = `${searchPlace} 공원`;
     ps.keywordSearch(combinedSearchPlace, placesSearchCB);
 
-    function placesSearchCB(data, status) {
+    function placesSearchCB(data, status, pagination) {
       if (status === kakao.maps.services.Status.OK) {
         let bounds = new kakao.maps.LatLngBounds();
         data.forEach((place) => {
@@ -29,6 +29,7 @@ const MapContainer_park = ({ searchPlace, onSelectPark }) => {
         });
         map.setBounds(bounds);
         setPlaces(data);
+        setPagination(pagination); // 페이지네이션 상태 업데이트
       }
     }
 
@@ -49,13 +50,40 @@ const MapContainer_park = ({ searchPlace, onSelectPark }) => {
         infowindow.setContent(content);
         infowindow.open(map, marker);
 
-        // 마커의 정보창에서 "선택" 버튼을 클릭했을 때 지역 이름을 선택하고 다음 화면으로 이동
+        // 마커의 정보창에서 "선택" 버튼을 클릭했을 때 공원 정보를 선택하고 다음 화면으로 이동
         document.getElementById('select-park').onclick = () => {
           onSelectPark(place.place_name); // 공원 이름을 선택한 값으로 처리
         };
       });
     }
   }, [searchPlace, onSelectPark]);
+
+  // 페이지네이션 처리 함수
+  const handlePagination = (page) => {
+    if (pagination) {
+      pagination.gotoPage(page); // 페이지 이동
+    }
+  };
+
+  // 페이지네이션 UI 생성 함수
+  function displayPagination() {
+    if (!pagination) return null; // 페이지네이션이 없을 경우 표시 안함
+
+    const pages = [];
+    for (let i = 1; i <= pagination.last; i++) {
+      pages.push(
+        <button
+          key={i}
+          className={`page-button ${i === pagination.current ? 'on' : ''}`} // 현재 페이지에 'on' 클래스 추가
+          onClick={() => handlePagination(i)}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    return <div className="pagination-container">{pages}</div>;
+  }
 
   return (
     <div>
@@ -72,7 +100,7 @@ const MapContainer_park = ({ searchPlace, onSelectPark }) => {
             <div
               key={i}
               className="place-card"
-              onClick={() => onSelectPark(item.place_name)} // 공원 이름 클릭 시 호출
+              onClick={() => onSelectPark(item.place_name)} // 선택된 공원을 전달
               style={{ cursor: 'pointer' }}
             >
               <span className="place-index">{i + 1}</span>
@@ -91,6 +119,7 @@ const MapContainer_park = ({ searchPlace, onSelectPark }) => {
             </div>
           ))}
         </div>
+        {displayPagination()} {/* 페이지네이션 UI 표시 */}
       </div>
     </div>
   );
