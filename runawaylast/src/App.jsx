@@ -61,14 +61,14 @@ function App() {
 
   // 짐 있음 버튼 클릭 시 편의점 추천 페이지로 이동
   function handleBagYes() {
-    setRunStage("장소 선택 중"); // 상태 변경
+    setRunStage("장소 선택 중 - 편의점 선택"); // 상태 변경
     setShowBagOptions(false); // 짐 옵션 화면 숨김
     navigate("/convstore"); // 편의점 추천 페이지로 이동
   }
 
   // 짐 없음 버튼 클릭 시 공원 추천 페이지로 바로 이동
   function handleBagNo() {
-    setRunStage("장소 선택 중"); // 상태 변경
+    setRunStage("Running Spot 선택 중"); // 상태 변경 (짐 없음을 선택했을 때도 같은 상태로 변경)
     setShowBagOptions(false); // 짐 옵션 화면 숨김
     navigate("/park"); // 공원 추천 페이지로 바로 이동
   }
@@ -76,6 +76,7 @@ function App() {
   // 편의점 선택 시 공원 추천 페이지로 이동
   function handleSelectConvenienceStore(store) {
     setSelectedConvenienceStore(store); // 선택된 편의점 저장
+    setRunStage("Running Spot 선택 중"); // 상태 변경
     navigate("/park"); // 공원 추천 페이지로 이동
   }
 
@@ -110,15 +111,18 @@ function App() {
               </ul>
             </>
           ) : (
-            <div className="running-container">
-              {/* 장소 선택 중일 때는 "달릴 준비 중!" 문구만 표시 */}
-              {runStage === "장소 선택 중" && (
-                <p>달릴 준비 중!</p>
+            <div className="centered-container">
+              {/* 장소 선택 중일 때 단계별로 다른 문구 표시 */}
+              {runStage === "장소 선택 중 - 편의점 선택" && (
+                <h1>달릴 준비 중! 짐을 맡길 곳을 선택해 보세요!</h1>
               )}
-
+              {runStage === "Running Spot 선택 중" && (
+                <h1>Running Spot을 선택해 보세요!</h1>
+              )}
+              
               {/* 짐 선택 후 문구 표시 */}
               {runStage === "기록 입력 중" && selectedConvenienceStore && (
-                <p>짐은 {selectedConvenienceStore.place_name}에 있어요!</p>
+                <h1>짐은 {selectedConvenienceStore.place_name}에 있어요!</h1>
               )}
 
               {/* 메인으로 돌아가는 버튼 표시 */}
