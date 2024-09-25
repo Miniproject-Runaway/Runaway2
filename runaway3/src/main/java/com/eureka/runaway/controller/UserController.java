@@ -14,7 +14,7 @@ import com.eureka.runaway.entity.User;
 import com.eureka.runaway.service.GoogleService;
 import com.eureka.runaway.service.UserService;
 
-@CrossOrigin(origins = "http://localhost:5173")  // React 앱이 실행 중인 포트 허용
+@CrossOrigin(origins = "http://localhost:3000")  // React 앱이 실행 중인 포트 허용
 @RestController
 @RequestMapping("/api/auth")
 public class UserController {
