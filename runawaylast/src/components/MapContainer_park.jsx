@@ -1,17 +1,13 @@
-// MapContainer_park.jsx
-
 import React, { useEffect, useState } from 'react';
 import './MapContainer.css';
 
 const { kakao } = window;
 
 const MapContainer_park = ({ searchPlace, onSelectPark }) => {
-  
   const [Places, setPlaces] = useState([]);
 
   useEffect(() => {
     var infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
-    var markers = [];
     const container = document.getElementById('myMap');
     const options = {
       center: new kakao.maps.LatLng(33.450701, 126.570667),
@@ -21,48 +17,19 @@ const MapContainer_park = ({ searchPlace, onSelectPark }) => {
 
     const ps = new kakao.maps.services.Places();
 
-    // "공원" 키워드 추가
     const combinedSearchPlace = `${searchPlace} 공원`;
     ps.keywordSearch(combinedSearchPlace, placesSearchCB);
 
-    function placesSearchCB(data, status, pagination) {
+    function placesSearchCB(data, status) {
       if (status === kakao.maps.services.Status.OK) {
         let bounds = new kakao.maps.LatLngBounds();
-        for (let i = 0; i < data.length; i++) {
-          displayMarker(data[i]);
-          bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
-        }
+        data.forEach((place) => {
+          displayMarker(place);
+          bounds.extend(new kakao.maps.LatLng(place.y, place.x));
+        });
         map.setBounds(bounds);
-        displayPagination(pagination);
         setPlaces(data);
       }
-    }
-
-    function displayPagination(pagination) {
-      var paginationEl = document.getElementById('pagination'),
-        fragment = document.createDocumentFragment(),
-        i;
-      while (paginationEl.hasChildNodes()) {
-        paginationEl.removeChild(paginationEl.lastChild);
-      }
-      for (i = 1; i <= pagination.last; i++) {
-        var el = document.createElement('a');
-        el.href = '#';
-        el.innerHTML = i;
-
-        if (i === pagination.current) {
-          el.className = 'on';
-        } else {
-          el.onclick = (function (i) {
-            return function () {
-              pagination.gotoPage(i);
-            };
-          })(i);
-        }
-
-        fragment.appendChild(el);
-      }
-      paginationEl.appendChild(fragment);
     }
 
     function displayMarker(place) {
@@ -72,11 +39,23 @@ const MapContainer_park = ({ searchPlace, onSelectPark }) => {
       });
 
       kakao.maps.event.addListener(marker, 'click', function () {
-        infowindow.setContent('<div style="padding:5px;font-size:12px; color:black; font-weight: bold;">' + place.place_name + '</div>');
+        const content = `<div style="padding:5px;font-size:12px; color:black; font-weight: bold;">
+                          ${place.place_name}
+                          <br />
+                          <button id="select-park" style="margin-top: 5px; background-color: #4CAF50; color: white; border: none; padding: 5px 10px; cursor: pointer;">
+                            선택
+                          </button>
+                        </div>`;
+        infowindow.setContent(content);
         infowindow.open(map, marker);
+
+        // 마커의 정보창에서 "선택" 버튼을 클릭했을 때 지역 이름을 선택하고 다음 화면으로 이동
+        document.getElementById('select-park').onclick = () => {
+          onSelectPark(place.place_name); // 공원 이름을 선택한 값으로 처리
+        };
       });
     }
-  }, [searchPlace]);
+  }, [searchPlace, onSelectPark]);
 
   return (
     <div>
@@ -112,7 +91,6 @@ const MapContainer_park = ({ searchPlace, onSelectPark }) => {
             </div>
           ))}
         </div>
-        <div id="pagination"></div>
       </div>
     </div>
   );

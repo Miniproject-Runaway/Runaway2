@@ -5,7 +5,7 @@ const { kakao } = window;
 
 const MapContainer_convstore = ({ searchPlace, onSelectStore }) => {
   const [Places, setPlaces] = useState([]);
-  const [pagination, setPagination] = useState(null); // 페이지네이션 상태 추가
+  const [pagination, setPagination] = useState(null);
 
   useEffect(() => {
     var infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
@@ -29,7 +29,7 @@ const MapContainer_convstore = ({ searchPlace, onSelectStore }) => {
         });
         map.setBounds(bounds);
         setPlaces(data);
-        setPagination(pagination); // 페이지네이션 상태 업데이트
+        setPagination(pagination);
       }
     }
 
@@ -40,29 +40,39 @@ const MapContainer_convstore = ({ searchPlace, onSelectStore }) => {
       });
 
       kakao.maps.event.addListener(marker, 'click', function () {
-        infowindow.setContent('<div style="padding:5px;font-size:12px; color:black; font-weight: bold;">' + place.place_name + '</div>');
+        const content = `<div style="padding:5px;font-size:12px; color:black; font-weight: bold;">
+                          ${place.place_name}
+                          <br />
+                          <button id="select-store" style="margin-top: 5px; background-color: #4CAF50; color: white; border: none; padding: 5px 10px; cursor: pointer;">
+                            선택
+                          </button>
+                        </div>`;
+        infowindow.setContent(content);
         infowindow.open(map, marker);
+
+        // 마커의 정보창에서 "선택" 버튼을 클릭했을 때 편의점 정보를 선택하고 다음 화면으로 이동
+        document.getElementById('select-store').onclick = () => {
+          onSelectStore(place); // 편의점 정보를 선택한 값으로 처리
+        };
       });
     }
-  }, [searchPlace]);
+  }, [searchPlace, onSelectStore]);
 
-  // 페이지네이션 처리 함수
   const handlePagination = (page) => {
     if (pagination) {
-      pagination.gotoPage(page); // 페이지 이동
+      pagination.gotoPage(page);
     }
   };
 
-  // 페이지네이션 UI 생성 함수
   function displayPagination() {
-    if (!pagination) return null; // 페이지네이션이 없을 경우 표시 안함
+    if (!pagination) return null;
 
     const pages = [];
     for (let i = 1; i <= pagination.last; i++) {
       pages.push(
         <button
           key={i}
-          className={`page-button ${i === pagination.current ? 'on' : ''}`} // 현재 페이지에 'on' 클래스 추가
+          className={`page-button ${i === pagination.current ? 'on' : ''}`}
           onClick={() => handlePagination(i)}
         >
           {i}
